@@ -1,0 +1,10 @@
+19:35:57 **** Incremental Build of configuration Debug for project NswMidi ****
+make -j8 all 
+arm-none-eabi-size  NswMidi.elf 
+   text	   data	    bss	    dec	    hex	filename
+  14124	     12	   2620	  16756	   4174	NswMidi.elf
+Finished building: default.size.stdout
+ 
+
+19:35:57 Build Finished. 0 errors, 0 warnings. (took 681ms)
+

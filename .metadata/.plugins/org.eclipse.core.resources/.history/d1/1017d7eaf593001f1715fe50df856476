@@ -1,0 +1,108 @@
+#include "ns_joystick.h"
+
+USB_JoystickReport_Input joystick_input;
+USB_JoystickReport_Output joystick_output;
+
+int Pushed(char* data, int input){
+	if(data[input] == 49) return 1; // int 49 = char '1'
+	else return 0;
+}
+
+char UpdateMode(char* data, char mode){
+	if (Pushed(data, MODE0_IN) && !(Pushed(data, MODE1_IN) || Pushed(data, MODE2_IN) || Pushed(data, MODE3_IN))) return MODE_0;
+	if (Pushed(data, MODE1_IN) && !(Pushed(data, MODE0_IN) || Pushed(data, MODE2_IN) || Pushed(data, MODE3_IN))) return MODE_1;
+	if (Pushed(data, MODE2_IN) && !(Pushed(data, MODE0_IN) || Pushed(data, MODE1_IN) || Pushed(data, MODE3_IN))) return MODE_2;
+	if (Pushed(data, MODE3_IN) && !(Pushed(data, MODE0_IN) || Pushed(data, MODE1_IN) || Pushed(data, MODE2_IN))) return MODE_3;
+	return mode;
+}
+
+void SetReport(char* data, char mode, USB_JoystickReport_Input* report){
+	ResetReport(report);
+
+	// DIR INPUTS [Bits 4-7]
+	// MODE_0 & MODE_3: LStick
+	if(mode == MODE_0 || mode == MODE_3){
+	  if(Pushed(data, LEFT_IN) && !Pushed(data, RIGHT_IN)) report->LX = STICK_MIN;
+	  else if(!Pushed(data, LEFT_IN) && Pushed(data, RIGHT_IN)) report->LX = STICK_MAX;
+	  if(!Pushed(data, DOWN_IN) && Pushed(data, UP_IN)) report->LY = STICK_MIN;
+	  else if(Pushed(data, DOWN_IN) && !Pushed(data, UP_IN)) report->LY = STICK_MAX;
+	}
+	// MODE_1: RStick
+	else if(mode == MODE_1){
+	  if(Pushed(data, LEFT_IN) && !Pushed(data, RIGHT_IN)) report->RX = STICK_MIN;
+	  else if(!Pushed(data, LEFT_IN) && Pushed(data, RIGHT_IN)) report->RX = STICK_MAX;
+	  if(!Pushed(data, DOWN_IN) && Pushed(data, UP_IN)) report->RY = STICK_MIN;
+	  else if(Pushed(data, DOWN_IN) && !Pushed(data, UP_IN)) report->RY = STICK_MAX;
+	}
+	// MODE_2: DPad
+	else{
+	  if(Pushed(data, UP_IN) && !Pushed(data, RIGHT_IN) && !Pushed(data, DOWN_IN) && !Pushed(data, LEFT_IN)) report->HAT = HAT_TOP;
+	  else if(Pushed(data, UP_IN) && Pushed(data, RIGHT_IN) && !Pushed(data, DOWN_IN) && !Pushed(data, LEFT_IN)) report->HAT = HAT_TOP_RIGHT;
+	  else if(!Pushed(data, UP_IN) && Pushed(data, RIGHT_IN) && !Pushed(data, DOWN_IN) && !Pushed(data, LEFT_IN)) report->HAT = HAT_RIGHT;
+	  else if(!Pushed(data, UP_IN) && Pushed(data, RIGHT_IN) && Pushed(data, DOWN_IN) && !Pushed(data, LEFT_IN)) report->HAT = HAT_BOTTOM_RIGHT;
+	  else if(!Pushed(data, UP_IN) && !Pushed(data, RIGHT_IN) && Pushed(data, DOWN_IN) && !Pushed(data, LEFT_IN)) report->HAT = HAT_BOTTOM;
+	  else if(!Pushed(data, UP_IN) && !Pushed(data, RIGHT_IN) && Pushed(data, DOWN_IN) && Pushed(data, LEFT_IN)) report->HAT = HAT_BOTTOM_LEFT;
+	  else if(!Pushed(data, UP_IN) && !Pushed(data, RIGHT_IN) && !Pushed(data, DOWN_IN) && Pushed(data, LEFT_IN)) report->HAT = HAT_LEFT;
+	  else if(Pushed(data, UP_IN) && !Pushed(data, RIGHT_IN) && !Pushed(data, DOWN_IN) && Pushed(data, LEFT_IN)) report->HAT = HAT_TOP_LEFT;
+	}
+
+	// FIXED INPUTS [Bits 8-11]
+	report->Button |= SWITCH_MINUS * Pushed(data, MINUS_IN);
+	report->Button |= SWITCH_PLUS * Pushed(data, PLUS_IN);
+	report->Button |= SWITCH_HOME * Pushed(data, HOME_IN);
+	report->Button |= SWITCH_CAPTURE * Pushed(data, CAPTURE_IN);
+
+	// FRONT INPUTS [Bits 12-15]
+	// MODE_3: RStick
+	if(mode == MODE_3){
+      if(Pushed(data, YBTN_IN) && !Pushed(data, XBTN_IN)) report->RX = STICK_MIN;
+	  else if(!Pushed(data, YBTN_IN) && Pushed(data, XBTN_IN)) report->RX = STICK_MAX;
+	  if(!Pushed(data, ABTN_IN) && Pushed(data, BBTN_IN)) report->RY = STICK_MIN;
+	  else if(Pushed(data, ABTN_IN) && !Pushed(data, BBTN_IN)) report->RY = STICK_MAX;
+	}
+	// MODE_0 & MODE_1 & MODE_2: ABXY Buttons
+	else{
+	  report->Button |= SWITCH_Y * Pushed(data, YBTN_IN);
+	  report->Button |= SWITCH_B * Pushed(data, BBTN_IN);
+	  report->Button |= SWITCH_A * Pushed(data, ABTN_IN);
+	  report->Button |= SWITCH_X * Pushed(data, XBTN_IN);
+	}
+
+	// FIXED INPUTS [Bits 16-21]
+	report->Button |= SWITCH_L * Pushed(data, LBTN_IN);
+	report->Button |= SWITCH_R * Pushed(data, RBTN_IN);
+	report->Button |= SWITCH_ZL * Pushed(data, ZLBTN_IN);
+	report->Button |= SWITCH_ZR * Pushed(data, ZRBTN_IN);
+	report->Button |= SWITCH_LCLICK * Pushed(data, LSBTN_IN);
+	report->Button |= SWITCH_RCLICK * Pushed(data, RSBTN_IN);
+
+}
+
+void ResetReport(USB_JoystickReport_Input* report) {
+  memset(report, 0, sizeof(USB_JoystickReport_Input));
+  report->LX = STICK_CENTER;
+  report->LY = STICK_CENTER;
+  report->RX = STICK_CENTER;
+  report->RY = STICK_CENTER;
+  report->HAT = HAT_CENTER;
+}
+
+uint8_t SendReport(USBD_HandleTypeDef* pdev, USB_JoystickReport_Input* input_data)
+{
+  uint8_t result = USBD_FAIL;
+  result = USBD_HID_SendReport(pdev, (uint8_t*)input_data, sizeof(USB_JoystickReport_Input));
+  return result;
+}
+
+void HoldReport(USBD_HandleTypeDef* pdev, USB_JoystickReport_Input* const input_data, uint32_t delay_ms)
+{
+  uint32_t tickstart = HAL_GetTick();
+  while ((HAL_GetTick() - tickstart) < delay_ms)
+  {
+    SendReport(pdev, input_data);
+  }
+}
+
+/****END OF FILE****/
+
+

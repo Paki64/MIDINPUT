@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;SwMidi_In/Core/Inc/midi_router&apos; to &apos;midi_router.h&apos;" description="Rename resource &apos;midi_router&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Core/Inc/midi_router" name="midi_router.h" stamp="1729621160877" updateReferences="true"/>
+</session>

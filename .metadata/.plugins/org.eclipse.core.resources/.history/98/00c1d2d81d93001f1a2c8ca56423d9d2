@@ -1,0 +1,52 @@
+#ifndef _MIDI_H
+#define _MIDI_H
+
+typedef enum {
+	NoteOff       = 0x8,
+	NoteOn        = 0x9,
+	PolyPressure  = 0xa,
+	CC            = 0xb,
+	ProgramChange = 0xc,
+	Aftertouch    = 0xd,
+	PitchBend     = 0xe
+} midi_event_t;
+
+
+typedef union {
+	struct {
+		u32 ALL;
+	};
+	struct {
+		uint8_t cin_cable;
+		uint8_t evnt0;
+		uint8_t evnt1;
+		uint8_t evnt2;
+	};
+	struct {
+		uint8_t type:4;
+		uint8_t cable:4;
+		uint8_t chn:4;
+		uint8_t event:4;
+		uint8_t value1;
+		uint8_t value2;
+	};
+	struct {
+		uint8_t cin:4;
+		uint8_t dummy1_cable:4;
+		uint8_t dummy1_chn:4;
+		uint8_t dummy1_event:4;
+		uint8_t note:8;
+		uint8_t velocity:8;
+	};
+	struct {
+		uint8_t dummy2_cin:4;
+		uint8_t dummy2_cable:4;
+		uint8_t dummy2_chn:4;
+		uint8_t dummy2_event:4;
+		uint8_t cc_number:8;
+		uint8_t value:8;
+	};
+} midi_package_t;
+
+#endif /* _MIOS32_MIDI_H */
+

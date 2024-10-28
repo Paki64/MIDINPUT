@@ -1,0 +1,7 @@
+19:13:40 **** Incremental Build of configuration Debug for project Project_SwMidi_in ****
+make -j8 all 
+USB_DEVICE/Target/subdir.mk:19: *** unable to generate command line.  Stop.
+"make -j8 all" terminated with exit code 2. Build might be incomplete.
+
+19:13:41 Build Failed. 1 errors, 0 warnings. (took 479ms)
+

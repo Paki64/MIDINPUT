@@ -1,0 +1,15 @@
+23:33:53 **** Incremental Build of configuration Debug for project Test1 ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DDEBUG -DSTM32F407xx -c -I../USB_HOST/App -I../Drivers/CMSIS/Include -I../Middlewares/ST/STM32_USB_Host_Library/Class/HID/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Core/Inc -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../USB_HOST/Target -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Middlewares/ST/STM32_USB_Host_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Inc -I"C:/Users/pasqu/Downloads/test1/Drivers/USBH_midi_class/Inc" -I"C:/Users/pasqu/Downloads/test1/Synth" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+In file included from C:/Users/pasqu/Downloads/test1/Synth/soundGen.h:39,
+                 from C:/Users/pasqu/Downloads/test1/Synth/MIDI_application.h:27,
+                 from ../Core/Src/main.c:26:
+C:/Users/pasqu/Downloads/test1/Synth/timers.h:19:10: fatal error: stm32f4_discovery_audio.h: No such file or directory
+   19 | #include "stm32f4_discovery_audio.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make: *** [Core/Src/subdir.mk:31: Core/Src/main.o] Error 1
+"make -j8 all" terminated with exit code 2. Build might be incomplete.
+
+23:33:54 Build Failed. 2 errors, 0 warnings. (took 871ms)
+

@@ -1,0 +1,5 @@
+../USB_HOST/App/usb_host.c:63:6:MIDI_Application	8	static
+../USB_HOST/App/usb_host.c:81:6:USBH_MIDI_ReceiveCallback	24	static
+../USB_HOST/App/usb_host.c:95:6:MX_USB_HOST_Init	8	static
+../USB_HOST/App/usb_host.c:122:6:MX_USB_HOST_Process	8	static
+../USB_HOST/App/usb_host.c:130:13:USBH_UserProcess	16	static

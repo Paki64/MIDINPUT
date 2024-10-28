@@ -1,0 +1,78 @@
+
+#include "midi_router.h"
+#include "usb_device.h"
+#include "usbd_midi.h"
+
+extern USBD_HandleTypeDef hUsbDeviceFS;
+
+static uint8_t buffUsb[MIDI_BUFFER_LENGTH] = {0};
+volatile static uint8_t buffUsbNextIndex = 0;
+static uint8_t buffUsbCurrIndex = 0;
+
+void USBD_MIDI_DataInHandler(uint8_t *usb_rx_buffer, uint8_t usb_rx_buffer_length)
+{
+  while (usb_rx_buffer_length && *usb_rx_buffer != 0x00)
+  {
+    buffUsb[buffUsbNextIndex++] = *usb_rx_buffer++;
+    buffUsb[buffUsbNextIndex++] = *usb_rx_buffer++;
+    buffUsb[buffUsbNextIndex++] = *usb_rx_buffer++;
+    buffUsb[buffUsbNextIndex++] = *usb_rx_buffer++;
+
+    usb_rx_buffer_length -= 4;
+  }
+}
+
+bool MIDI_HasUSBData(void)
+{
+  return buffUsbCurrIndex != buffUsbNextIndex;
+}
+
+void MIDI_ProcessUSBData(uint8_t data)
+{
+  static uint8_t lastMessagesBytePerCable[MIDI_CABLES_NUMBER] = {0};
+  uint8_t *pLastMessageByte;
+  uint8_t messageByte;
+  uint8_t message;
+  uint8_t param1;
+  uint8_t param2;
+
+  if (buffUsbCurrIndex == buffUsbNextIndex)
+    return;
+
+  messageByte = buffUsb[buffUsbCurrIndex + 1];
+  message = (messageByte >> 4);
+  param1 = buffUsb[buffUsbCurrIndex + 2];
+  param2 = buffUsb[buffUsbCurrIndex + 3];
+
+  if ((messageByte & MIDI_MASK_REAL_TIME_MESSAGE) == MIDI_MASK_REAL_TIME_MESSAGE)
+  {
+    data = messageByte;
+  }
+  else if (message == MIDI_MESSAGE_CHANNEL_PRESSURE ||
+           message == MIDI_MESSAGE_PROGRAM_CHANGE ||
+           messageByte == MIDI_MESSAGE_TIME_CODE_QTR_FRAME ||
+           messageByte == MIDI_MESSAGE_SONG_SELECT)
+  {
+    if (*pLastMessageByte != messageByte)
+    {
+      data = messageByte;
+      *pLastMessageByte = messageByte;
+    }
+    pSend(param1);
+  }
+  else if (message == MIDI_MESSAGE_NOTE_ON ||
+           message == MIDI_MESSAGE_NOTE_OFF ||
+           message == MIDI_MESSAGE_KEY_PRESSURE ||
+           message == MIDI_MESSAGE_CONTROL_CHANGE ||
+           messageByte == MIDI_MESSAGE_SONG_POSITION ||
+           message == MIDI_MESSAGE_PITCH_BAND_CHANGE)
+  {
+    if (*pLastMessageByte != messageByte)
+    {
+	  data = messageByte;
+      *pLastMessageByte = messageByte;
+    }
+  }
+
+  buffUsbCurrIndex += 4;
+}

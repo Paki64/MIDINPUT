@@ -1,0 +1,25 @@
+20:50:00 **** Incremental Build of configuration Debug for project SwMidi_In ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc -I"C:/Users/pasqu/Documents/Progetto STM/SwMidi_In/Middlewares/ST/STM32_USB_Device_Library/Class/MIDI/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:114:20: warning: implicit declaration of function 'MIDI_HasUSBData'; did you mean 'MIDI_ProcessUSBData'? [-Wimplicit-function-declaration]
+  114 |           report = MIDI_HasUSBData();
+      |                    ^~~~~~~~~~~~~~~
+      |                    MIDI_ProcessUSBData
+../Core/Src/main.c:107:11: warning: variable 'report' set but not used [-Wunused-but-set-variable]
+  107 |   uint8_t report;
+      |           ^~~~~~
+arm-none-eabi-gcc -o "SwMidi_In.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\pasqu\Documents\Progetto STM\SwMidi_In\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SwMidi_In.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: SwMidi_In.elf
+ 
+arm-none-eabi-size  SwMidi_In.elf 
+arm-none-eabi-objdump -h -S SwMidi_In.elf  > "SwMidi_In.list"
+   text	   data	    bss	    dec	    hex	filename
+  32468	    228	   4732	  37428	   9234	SwMidi_In.elf
+Finished building: default.size.stdout
+ 
+Finished building: SwMidi_In.list
+ 
+
+20:50:02 Build Finished. 0 errors, 2 warnings. (took 1s.892ms)
+

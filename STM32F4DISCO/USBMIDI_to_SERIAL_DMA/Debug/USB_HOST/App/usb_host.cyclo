@@ -1,0 +1,7 @@
+../USB_HOST/App/usb_host.c:65:6:MIDI_Application	3
+../USB_HOST/App/usb_host.c:83:6:HAL_UART_TxHalfCpltCallback	1
+../USB_HOST/App/usb_host.c:88:6:HAL_UART_TxCpltCallback	1
+../USB_HOST/App/usb_host.c:95:6:USBH_MIDI_ReceiveCallback	1
+../USB_HOST/App/usb_host.c:112:6:MX_USB_HOST_Init	4
+../USB_HOST/App/usb_host.c:139:6:MX_USB_HOST_Process	1
+../USB_HOST/App/usb_host.c:147:13:USBH_UserProcess	4
