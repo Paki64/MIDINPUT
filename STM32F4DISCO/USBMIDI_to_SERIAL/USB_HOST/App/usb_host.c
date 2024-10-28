@@ -80,10 +80,10 @@ void MIDI_Application(void)
 
 void USBH_MIDI_ReceiveCallback(USBH_HandleTypeDef *phost)
 {
-	USBH_MIDI_Receive(&hUsbHostFS, MIDI_RX_Buffer, RX_BUFF_SIZE); // start a new reception
     HAL_UART_Transmit(&huart2, MIDI_RX_Buffer, RX_BUFF_SIZE, HAL_MAX_DELAY);
     sprintf(buffer, "%02X %02X %02X %02X\r\n", MIDI_RX_Buffer[0], MIDI_RX_Buffer[1], MIDI_RX_Buffer[2], MIDI_RX_Buffer[3]);
     HAL_UART_Transmit(&huart6, (uint8_t*)buffer, strlen(buffer),HAL_MAX_DELAY);
+  	USBH_MIDI_Receive(&hUsbHostFS, MIDI_RX_Buffer, RX_BUFF_SIZE); // start a new reception
 }
 
 /* USER CODE END 1 */
