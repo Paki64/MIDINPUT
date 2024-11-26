@@ -1,4 +1,4 @@
-# USB-Midi signal to Nintendo Switch HID adapter
+# MIDINPU: A USB-Midi signal to Nintendo Switch HID adapter
 An adapter from USB-MIDI signal to HID Input for Nintendo Switch: using two boards: an STM32F3DISCOVERY and an STM32F4DISCOVERY. Little university project.
 
 ## Disclaimer
